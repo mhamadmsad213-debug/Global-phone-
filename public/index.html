@@ -1,34 +1,36 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>الهاتف العالمي - Pi Network</title>
-  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-  <style>
-    body { font-family: Arial; text-align: center; padding: 50px; background: #f5f5f5; }
-    button { background: #783A8C; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق الهاتف العالمي</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f5f5f5; }
+        .container { text-align: center; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { font-size: 28px; margin-bottom: 10px; }
+        p { color: #666; margin-bottom: 30px; }
+        #login-button { background-color: #6f42c1; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 8px; cursor: pointer; }
+    </style>
 </head>
 <body>
-  <h1>مرحباً بك في تطبيق الهاتف العالمي</h1>
-  <p>سجل دخولك باستخدام Pi Network</p>
-  <button onclick="loginWithPi()">تسجيل الدخول بـ Pi</button>
-  <p id="result" style="margin-top:20px; font-weight:bold;"></p>
-
-  <script>
-    const Pi = window.Pi;
-    Pi.init({ version: "2.0" });
-    
-    function loginWithPi() {
-      Pi.authenticate(['username', 'payments'])
-        .then(function(auth) {
-          document.getElementById('result').innerText = 'أهلاً ' + auth.user.username;
-        })
-        .catch(function(error) {
-          document.getElementById('result').innerText = 'فشل تسجيل الدخول';
+    <div class="container">
+        <h1>مرحباً بك في<br>تطبيق الهاتف العالمي</h1>
+        <p>سجل دخولك باستخدام Pi Network</p>
+        <button id="login-button">تسجيل الدخول بـ Pi</button>
+    </div>
+    <script>
+        Pi.init({ version: "2.0", sandbox: true });
+        document.getElementById('login-button').addEventListener('click', async function() {
+            const scopes = ['username', 'payments'];
+            try {
+                const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+                alert('أهلاً ' + auth.user.username);
+            } catch (error) {
+                alert('فشل الدخول: ' + error);
+            }
         });
-    }
-  </script>
+        function onIncompletePaymentFound(payment) { console.log(payment); };
+    </script>
 </body>
 </html>
