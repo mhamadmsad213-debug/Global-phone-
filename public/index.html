@@ -1,36 +1,81 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق الهاتف العالمي</title>
-    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f5f5f5; }
-        .container { text-align: center; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1 { font-size: 28px; margin-bottom: 10px; }
-        p { color: #666; margin-bottom: 30px; }
-        #login-button { background-color: #6f42c1; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 8px; cursor: pointer; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Business Directory | دليل الشركات العالمي</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, sans-serif; 
+      background: #0f172a; 
+      color: #e2e8f0; 
+      line-height: 1.6;
+    }
+    .header { 
+      background: linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%);
+      padding: 60px 20px; 
+      text-align: center; 
+    }
+    h1 { font-size: 2.5rem; margin-bottom: 10px; }
+    .subtitle { font-size: 1.2rem; opacity: 0.9; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+    .search-box {
+      background: #1e293b; 
+      padding: 20px; 
+      border-radius: 12px; 
+      margin-bottom: 40px;
+      display: flex; 
+      gap: 10px;
+    }
+    .search-box input {
+      flex: 1; 
+      padding: 15px; 
+      border: none; 
+      border-radius: 8px; 
+      background: #334155; 
+      color: white; 
+      font-size: 16px;
+    }
+    .search-box button {
+      padding: 15px 30px; 
+      background: #0ea5e9; 
+      border: none; 
+      border-radius: 8px; 
+      color: white; 
+      font-weight: bold; 
+      cursor: pointer;
+    }
+    .grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+      gap: 20px; 
+    }
+    .card { 
+      background: #1e293b; 
+      padding: 25px; 
+      border-radius: 12px; 
+      border: 1px solid #334155;
+    }
+    .card h3 { color: #22d3ee; margin-bottom: 10px; }
+    .card .country { color: #94a3b8; font-size: 0.9rem; margin-bottom: 15px; }
+    .footer { text-align: center; padding: 30px; color: #64748b; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>مرحباً بك في<br>تطبيق الهاتف العالمي</h1>
-        <p>سجل دخولك باستخدام Pi Network</p>
-        <button id="login-button">تسجيل الدخول بـ Pi</button>
+  <div class="header">
+    <h1>🌍 دليل الشركات العالمي</h1>
+    <p class="subtitle">اكتشف وتواصل مع أفضل الشركات حول العالم</p>
+  </div>
+
+  <div class="container">
+    <div class="search-box">
+      <input type="text" placeholder="ابحث عن شركة، مجال، أو دولة...">
+      <button>بحث</button>
     </div>
-    <script>
-        Pi.init({ version: "2.0", sandbox: true });
-        document.getElementById('login-button').addEventListener('click', async function() {
-            const scopes = ['username', 'payments'];
-            try {
-                const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
-                alert('أهلاً ' + auth.user.username);
-            } catch (error) {
-                alert('فشل الدخول: ' + error);
-            }
-        });
-        function onIncompletePaymentFound(payment) { console.log(payment); };
-    </script>
-</body>
-</html>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Tech Global Inc</h3>
+        <div class="country">📍 الولايات المتحدة الأمريكية</div>
+        <p>شركة رائدة في حلول البرمجيات والذكاء الاصطناعي للشر
