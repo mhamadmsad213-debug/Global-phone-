@@ -3,40 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phone Global Directory | دليل الشركات العالمي بـ Pi</title>
+    <title>Phone Global Directory | دليل الهاتف العالمي</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #0f172a; color: #e2e8f0; line-height: 1.6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; 
+            color: white;
+            min-height: 100vh;
         }
         .header {
-            background: linear-gradient(135deg, #1e293b, #334155);
-            padding: 40px 20px; text-align: center; position: relative;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 40px 20px; 
+            text-align: center;
+            position: relative;
         }
-        h1 { font-size: 2.5rem; margin-bottom: 10px; color: #fbbf24; }
-        .subtitle { font-size: 1.2rem; opacity: 0.8; }
+        h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .subtitle { font-size: 1.2rem; opacity: 0.9; }
         .pi-btn {
             position: absolute; top: 20px; left: 20px;
             padding: 12px 24px; border: none; border-radius: 8px;
-            background: #fbbf24; color: #0f172a; font-weight: bold; cursor: pointer;
+            background: #fbbf24; color: #1f2937; font-weight: bold;
+            cursor: pointer; font-size: 14px;
+            transition: all 0.3s ease;
         }
-        #userInfo { position: absolute; top: 20px; right: 20px; font-weight: bold; }
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-        .add-btn {
-            display: none; margin: 0 auto 30px; padding: 15px 40px; border: none;
-            border-radius: 8px; background: #22c55e; color: #0f172a; 
-            font-weight: bold; cursor: pointer; font-size: 1.1rem;
+        .pi-btn:hover { background: #f59e0b; transform: translateY(-2px); }
+        #userInfo { 
+            position: absolute; top: 20px; left: 20px; 
+            background: rgba(255,255,255,0.1); padding: 8px 16px; 
+            border-radius: 8px; display: none;
         }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
         .search-box {
-            background: #1e293b; padding: 20px; border-radius: 12px;
-            margin-bottom: 40px; display: flex; gap: 10px;
+            background: #1e293b; padding: 30px; border-radius: 12px;
+            margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
-        .search-box input {
-            flex: 1; padding: 15px; border: none; border-radius: 8px;
-            background: #334155; color: #fff; font-size: 1rem;
+        .search-grid {
+            display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px;
         }
-        .search-box button {
-            padding: 15px 30px; border: none; border-radius: 8px;
-            background: #38bdf8; color: #0f172a; font
+        input, select {
+            padding: 12px; border: 2px solid #334155; border-radius: 8px;
+            background: #0f172a; color: white; font-size: 16px;
+        }
+        input:focus, select:focus { outline: none; border-color: #3b82f6; }
+        .search-btn {
+            padding: 12px 30px; background: #3b82f6; color: white;
+            border: none; border-radius: 8px; cursor: pointer;
+            font-weight: bold; transition: all 0.3s ease;
+        }
+        .search-btn:hover { background: #2563eb; }
+        .stats {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px; margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #1e293b; padding: 25px; border-radius: 12px;
+            text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .stat-number { font-size: 2rem; font-weight: bold; color: #3b82f6; }
+        .stat-label { margin-top: 10px; opacity: 0.8; }
+        .results { background: #1e293b; padding: 30px; border-radius: 12px; }
+        .result-item {
+            background: #0f172a; padding: 20px; border-radius: 8px;
+            margin-bottom: 15px; border-left: 4px solid #3b82f6;
+        }
+        .result-name { font-size: 1.2rem; font-weight: bold; margin-bottom: 8px; }
+        .result-phone { color: #3b82f6; font-size: 1.1rem; }
+        .result-location { opacity: 0.7; margin-top: 5px; }
+        .no-results { text-align: center; padding: 40px; opacity: 0.6; }
+        .loading { text-align: center; padding: 40px; }
+        .spinner {
+            border: 3px solid #334155; border-top: 3px solid #3b82f6;
+            border-radius: 50%; width: 40px; height: 40px;
+            animation: spin 1s linear infinite; margin: 0 auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @media (max-width: 768px) {
+            .search-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8rem; }
+            .pi-btn { position: static; margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="pi-btn" id="PiNetworkBtn">تسجيل الدخول بـ Pi</button>
+        <div id="userInfo"></div>
+        <h1>🌍 Phone Global Directory</h1>
+        <p class="subtitle">دليل الهاتف العالمي - ابحث عن أي رقم في العالم</p>
+    </div>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalNumbers">1,234,567</div>
+                <div class="stat-label">إجمالي الأرقام</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalCountries">195</div>
+                <div class="stat-label">الدول المتاحة</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsers">45,892</div>
+                <div class="stat-label">المستخدمين النشطين</div>
+            </div>
+        </div>
+
+        <div class="search-box">
+            <div class="search-grid">
+                <input type="text" id="searchName" placeholder="ابحث بالاسم...">
+                <select id="searchCountry">
+                    <option value="">كل الدول</option>
+                    <option value="SA">السعودية</option>
+                    <option value="AE">الإمارات</option>
+                    <option value="EG">مصر</option>
+                    <option value="YE">اليمن</option>
+                    <option value="US">أمريكا</option>
+                </select>
+                <button class="search-btn" onclick="searchNumbers()">بحث</button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="no-results">اكتب الاسم أو اختر الدولة للبحث</div>
+        </div>
+    </div>
+
+    <script>
+        Pi.init({ version: "2.0" });
+        
+        const PiNetworkBtn = document.getElementById('PiNetworkBtn');
+        const userInfo = document.getElementById('userInfo');
+        
+        PiNetworkBtn.addEventListener('click', async () => {
+            try {
+                const scopes = ['username', 'payments'];
+                const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+                userInfo.innerHTML = `مرحباً ${auth.user.username} 👋`;
+                userInfo.style.display = 'block';
+                PiNetworkBtn.style.display = 'none';
+            } catch (error) {
+                alert('فشل تسجيل الدخول: ' + error);
+            }
+        });
+
+        function onIncompletePaymentFound(payment) {
+            console.log('Payment found:', payment);
+        }
+
+        const mockData = [
+            { name: 'أحمد محمد', phone: '+966501234567', location: 'الرياض، السعودية' },
+            { name: 'فاطمة علي', phone: '+971501234567', location: 'دبي، الإمارات' },
+            { name: 'محمد أحمد', phone: '+201001234567', location: 'القاهرة، مصر' },
+            { name: 'علي حسن', phone: '+967771234567', location: 'صنعاء، اليمن' }
+        ];
+
+        function searchNumbers() {
+            const results = document.getElementById('results');
+            const name = document.getElementById('searchName').value;
+            const country = document.getElementById('searchCountry').value;
+            
+            results.innerHTML = '<div class="loading"><div class="spinner"></div><p>جاري البحث...</p></div>';
+            
+            setTimeout(() => {
+                let filtered = mockData;
+                
+                if (name) {
+                    filtered = filtered.filter(item => 
+                        item.name.includes(name)
+                    );
+                }
+                
+                if (country) {
+                    const countryCodes = { SA: '+966', AE: '+971', EG: '+20', YE: '+967', US: '+1' };
+                    filtered = filtered.filter(item => 
+                        item.phone.startsWith(countryCodes[country])
+                    );
+                }
+                
+                if (filtered.length === 0) {
+                    results.innerHTML = '<div class="no-results">لا توجد نتائج</div>';
+                    return;
+                }
+                
+                results.innerHTML = filtered.map(item => `
+                    <div class="result-item">
+                        <div class="result-name">${item.name}</div>
+                        <div class="result-phone">${item.phone}</div>
+                        <div class="result-location">${item.location}</div>
+                    </div>
+                `).join('');
+            }, 800);
+        }
+
+        document.getElementById('searchName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchNumbers();
+        });
+    </script>
+</body>
+</html>
